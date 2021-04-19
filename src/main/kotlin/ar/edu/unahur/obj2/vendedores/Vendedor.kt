@@ -28,6 +28,9 @@ abstract class Vendedor {
   fun otrasCertificaciones() = certificaciones.count { !it.esDeProducto }
 
   fun puntajeCertificaciones() = certificaciones.sumBy { c -> c.puntaje }
+
+  fun esInfluyente(): Boolean return false
+
 }
 
 // En los parámetros, es obligatorio poner el tipo
@@ -42,10 +45,22 @@ class Viajante(val provinciasHabilitadas: List<Provincia>) : Vendedor() {
   override fun puedeTrabajarEn(ciudad: Ciudad): Boolean {
     return provinciasHabilitadas.contains(ciudad.provincia)
   }
+
+  override fun esInfluyente() :Boolean{
+    return provinciasHabilitadas.sumBy ({ provincia -> provincia.poblacion }) >= 10000000
+  }
 }
 
 class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() {
   override fun puedeTrabajarEn(ciudad: Ciudad): Boolean {
     return ciudades.contains(ciudad)
+  }
+
+  override fun esInfluyente(): Boolean {
+    return ciudadadesSucursales.size()>=5 or this.provincias().size()>=3
+  }
+
+  fun provincias(){
+    return ciudadadesSucursales.map({sucursal -> sucursal.estaEnProvincia()}).asSet()
   }
 }
